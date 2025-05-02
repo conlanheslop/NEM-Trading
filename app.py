@@ -7,6 +7,10 @@ import time
 from matplotlib.colors import LinearSegmentedColormap
 import uuid
 
+##################
+### PAGE SETUP ###
+##################
+
 # Initialize session state variables if they don't exist
 if 'total_balance' not in st.session_state:
     st.session_state.total_balance = 10000.0  # Starting available cash balance
@@ -51,6 +55,11 @@ st.set_page_config(
 with open("styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     
+
+#####################
+### CHART UPDATES ###
+#####################
+
 # Function to update chart data every 30 seconds
 def update_chart_data():
     current_time = datetime.datetime.now()
@@ -118,6 +127,8 @@ def update_active_trades(current_price):
         
         # Update total trading balance
         st.session_state.trading_balance = sum([amount * current_price for amount in st.session_state.active_trades['Amount']])
+
+
 
 # Function to execute a trade
 def execute_trade(action, amount, price):
@@ -246,8 +257,17 @@ with col1:
     
     chart_placeholder = st.empty()
 
+#####################
+### TRADING PANEL ###
+#####################
+
 # Trading recommendations panel with buy/sell functionality
 with col2:
+
+    ###############
+    ### TRADE 1 ###
+    ###############
+
     st.markdown('<div class="trade-card">', unsafe_allow_html=True)
     st.markdown('<h3 style="text-align: center;">⚠️ TRADE 1 ⚠️</h3>', unsafe_allow_html=True)
     
@@ -287,10 +307,15 @@ with col2:
     
     st.markdown('</div>', unsafe_allow_html=True)
     
+
+    ###############
+    ### TRADE 2 ### 
+    ###############
+
     # st.markdown('<div class="trade-card">', unsafe_allow_html=True)
     # st.markdown('<h3 style="text-align: center;">⚠️ TRADE 2 ⚠️</h3>', unsafe_allow_html=True)
-    
-    # # Opposite recommendation for Trade 2
+
+    # Opposite recommendation for Trade 2
     # price_trend2 = "SELL EVERYTHING!!!" if price_trend == "BUY NOW!!!" else "BUY THE DIP!!!"
     # st.markdown(f'<div class="trade-suggestion">Suggestion: {price_trend2}</div>', unsafe_allow_html=True)
     
@@ -324,41 +349,39 @@ with col2:
     
     # st.markdown('</div>', unsafe_allow_html=True)
 
+#########################
+### ACTIVE TRADES BAR ###
+#########################
+
 # Active trades section
 if len(st.session_state.active_trades) > 0:
-    st.markdown('<h2 style="text-align: left;">🔥 ACTIVE TRADES 🔥</h2>', unsafe_allow_html=True)
-    
-    # Custom table styling with HTML
+    st.markdown('<h2 class="active-trades-title">🔥 ACTIVE TRADES 🔥</h2>', unsafe_allow_html=True)
+
     def highlight_profit_loss(val):
         if val.startswith('+'):
             return f'<span class="profit">{val}</span>'
         elif val.startswith('-'):
             return f'<span class="loss">{val}</span>'
         return val
-    
-    # Display the active trades table with custom styling
-    html_table = '<table style="width:100%; border-collapse: collapse;">'
+
+    html_table = '<table class="custom-table">'
     html_table += '<tr class="table-header">'
     for col in st.session_state.active_trades.columns:
-        html_table += f'<th style="padding: 10px; border: 1px solid #FFFF00;">{col}</th>'
+        html_table += f'<th>{col}</th>'
     html_table += '</tr>'
-    
-    row_colors = ['#8B0000', '#2D2D2D']  # Alternating row colors
+
+    row_classes = ['row-dark', 'row-darker']
     for idx, row in st.session_state.active_trades.iterrows():
-        bg_color = row_colors[idx % 2]
-        html_table += f'<tr style="background-color: {bg_color}; text-align: center;">'
+        row_class = row_classes[idx % 2]
+        html_table += f'<tr class="{row_class}">'
         for i, cell in enumerate(row):
-            if i == 4:  # Profit/Loss column
-                cell_text = highlight_profit_loss(str(cell))
-            else:
-                cell_text = cell
-            html_table += f'<td style="padding: 10px; border: 1px solid #444444; color: #FFFF00;">{cell_text}</td>'
+            cell_text = highlight_profit_loss(str(cell)) if i == 4 else cell
+            html_table += f'<td>{cell_text}</td>'
         html_table += '</tr>'
     html_table += '</table>'
-    
+
     st.markdown(html_table, unsafe_allow_html=True)
-    
-    # Sell all button
+
     if st.button("💰 SELL ALL ACTIVE TRADES"):
         total_amount = st.session_state.active_trades['Amount'].sum()
         success, message = execute_trade("SELL", total_amount, current_price)
@@ -368,19 +391,25 @@ if len(st.session_state.active_trades) > 0:
         else:
             st.error(message)
 
-# Add a refresh button (for manual refresh)
+# Refresh button
 if st.button("🔄 REFRESH MARKET DATA"):
-    # Force update chart data
     st.session_state.chart_data['last_update'] = datetime.datetime.now() - datetime.timedelta(seconds=30)
     st.rerun()
-        
-# File uploader for weather data
+
+
+######################
+### CSV ATTACHMENT ###
+######################
+
 uploaded_file = st.file_uploader("📁 Upload Weather Dataset (CSV)", type=["csv"])
 
-# Previous trades section
-st.markdown('<h2 style="text-align: left;">🔥 PREVIOUS TRADES 🔥</h2>', unsafe_allow_html=True)
 
-# Custom table styling with HTML
+#######################
+### PREVIOUS TRADES ###
+#######################
+
+st.markdown('<h2 class="active-trades-title">🔥 PREVIOUS TRADES 🔥</h2>', unsafe_allow_html=True)
+
 def highlight_profit_loss(val):
     if val.startswith('+'):
         return f'<span class="profit">{val}</span>'
@@ -388,27 +417,27 @@ def highlight_profit_loss(val):
         return f'<span class="loss">{val}</span>'
     return val
 
-# Display the previous trades table with custom styling
-html_table = '<table style="width:100%; border-collapse: collapse;">'
+html_table = '<table class="custom-table">'
 html_table += '<tr class="table-header">'
 for col in st.session_state.previous_trades.columns:
-    html_table += f'<th style="padding: 10px; border: 1px solid #FFFF00;">{col}</th>'
+    html_table += f'<th>{col}</th>'
 html_table += '</tr>'
 
-row_colors = ['#8B0000', '#2D2D2D']  # Alternating row colors
+row_classes = ['row-dark', 'row-darker']
 for idx, row in st.session_state.previous_trades.iterrows():
-    bg_color = row_colors[idx % 2]
-    html_table += f'<tr style="background-color: {bg_color}; text-align: center;">'
+    row_class = row_classes[idx % 2]
+    html_table += f'<tr class="{row_class}">'
     for i, cell in enumerate(row):
-        if i == 3:  # Profit/Loss column
-            cell_text = highlight_profit_loss(str(cell))
-        else:
-            cell_text = cell
-        html_table += f'<td style="padding: 10px; border: 1px solid #444444; color: #FFFF00;">{cell_text}</td>'
+        cell_text = highlight_profit_loss(str(cell)) if i == 3 else cell
+        html_table += f'<td>{cell_text}</td>'
     html_table += '</tr>'
 html_table += '</table>'
 
 st.markdown(html_table, unsafe_allow_html=True)
+
+###########################################
+### MODEL PREDICTION AFTER CSV ATTACHED ###
+###########################################
 
 # Model prediction section
 if uploaded_file:
@@ -570,34 +599,39 @@ else:
     
     
     st.markdown("""
-    <div style="background-color: #2D2D2D; padding: 20px; border-radius: 10px; border: 1px solid #FFD700;">
-        <h3 style="color: #FFD700;">⚡ UPLOAD YOUR WEATHER DATA TO START EXTREME TRADING ⚡</h3>
-        <p style="color: #FFD700;">Upload a CSV containing weather data with at least a 'temperature' column to see predictions.</p>
-        <p style="color: #FFD700;">Optional: Include 'actual_nem_price' column to compare with predictions.</p>
-        <p style="color: #FFD700; font-style: italic;">Meanwhile, trade with our auto-updating live market data!</p>
+    <div class="extreme-card">
+        <h3>⚡ UPLOAD YOUR WEATHER DATA TO START EXTREME TRADING ⚡</h3>
+        <p>Upload a CSV containing weather data with at least a 'temperature' column to see predictions.</p>
+        <p>Optional: Include 'actual_nem_price' column to compare with predictions.</p>
+        <p class="italic">Meanwhile, trade with our auto-updating live market data!</p>
     </div>
     """, unsafe_allow_html=True)
+
+#########################
+### PORTFOLIO SECTION ###
+#########################
 
 # Add a summary of total portfolio value
 total_portfolio = st.session_state.total_balance + st.session_state.trading_balance
 st.markdown(f"""
-<div style="background-color: #2D2D2D; padding: 15px; border-radius: 10px; border: 2px solid #FFD700; margin-top: 20px; text-align: center;">
-    <h2 style="color: #FFD700; margin-bottom: 10px;">PORTFOLIO SUMMARY</h2>
-    <p style="color: #FFFF00; font-size: 20px;">Available Cash: <span style="color:#00FF00">${st.session_state.total_balance:.2f}</span></p>
-    <p style="color: #FFFF00; font-size: 20px;">Invested in Trades: <span style="color:#00FF00">${st.session_state.trading_balance:.2f}</span></p>
-    <p style="color: #FFFF00; font-size: 24px; font-weight: bold;">TOTAL PORTFOLIO VALUE: <span style="color:#00FF00">${total_portfolio:.2f}</span></p>
+<div class="portfolio-summary">
+    <h2>PORTFOLIO SUMMARY</h2>
+    <p>Available Cash: <span>${st.session_state.total_balance:.2f}</span></p>
+    <p>Invested in Trades: <span>${st.session_state.trading_balance:.2f}</span></p>
+    <p>TOTAL PORTFOLIO VALUE: <span>${total_portfolio:.2f}</span></p>
 </div>
 """, unsafe_allow_html=True)
 
 # Add a footer with last updated time
 st.markdown(f"""
-<div style="background-color: #2D2D2D; padding: 10px; position: fixed; bottom: 0; width: 100%; text-align: center; border-top: 1px solid #FFD700;">
-    <p style="color: #FFD700; margin: 0;">LAST UPDATED: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | MARKET STATUS: <span style="color:#00FF00">OPEN</span> | PORTFOLIO: <span style="color:#00FF00">${total_portfolio:.2f}</span> | CURRENT PRICE: <span style="color:#FF00FF">${current_price:.2f}</span></p>
+<div class="footer-bar">
+    <p>LAST UPDATED: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} |
+    MARKET STATUS: <span>OPEN</span> |
+    PORTFOLIO: <span>${total_portfolio:.2f}</span> |
+    CURRENT PRICE: <span class="price">${current_price:.2f}</span></p>
 </div>
 """, unsafe_allow_html=True)
 
 # Persist session state by saving important variables
-# Note: This helps maintain state across refreshes within the Streamlit session
-# but won't persist if the server restarts or the browser session ends
 if 'first_load' not in st.session_state:
     st.session_state.first_load = False
