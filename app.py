@@ -50,15 +50,24 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for the flashy trading look
 # Load external CSS
 with open("styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     
+#
+#
+#
+###############################################################
+# This whole section is just utility functions for setting up #
+#           the processes of the application                  #
+###############################################################
+#
+#
+#
 
-#####################
-### CHART UPDATES ###
-#####################
+########################
+### UPDATE FUNCTIONS ###
+########################
 
 # Function to update chart data every 30 seconds
 def update_chart_data():
@@ -129,6 +138,9 @@ def update_active_trades(current_price):
         st.session_state.trading_balance = sum([amount * current_price for amount in st.session_state.active_trades['Amount']])
 
 
+#######################
+### TRADE EXECUTION ###
+#######################
 
 # Function to execute a trade
 def execute_trade(action, amount, price):
@@ -231,6 +243,16 @@ chart_updated = update_chart_data()
 current_time = datetime.datetime.now()
 last_update = st.session_state.chart_data['last_update']
 seconds_until_update = max(0, 30 - (current_time - last_update).total_seconds())
+
+#
+#
+#
+#############################################################
+# This section is the start of styling and drawing the page #
+#############################################################
+#
+#
+#
 
 # Warning banner
 st.markdown('<div class="warning-banner">⚠️ EXTREME VOLATILITY DETECTED! TRADE AT YOUR OWN RISK! ⚠️</div>', unsafe_allow_html=True)
