@@ -6,6 +6,7 @@ import datetime
 import time
 from matplotlib.colors import LinearSegmentedColormap
 import uuid
+from model import preprocess_data, train_model, predict_next_5min_with_signal
 
 ##################
 ### PAGE SETUP ###
@@ -28,6 +29,21 @@ if 'active_trades' not in st.session_state:
     st.session_state.active_trades = pd.DataFrame(columns=['Date/Time', 'Market Price', 'Amount', 'Current Value', 'Profit/Loss'])
 if 'last_price' not in st.session_state:
     st.session_state.last_price = 120  # Default current price
+if 'current_price' not in st.session_state:
+    st.session_state.current_price = 120.0  # Default placeholder
+if 'predicted_price' not in st.session_state:
+    st.session_state.predicted_price = 125.0  # Default placeholder
+if 'model_ran' not in st.session_state:
+    # Load and preprocess data
+    df, other = preprocess_data("combined_NSW_nem_weather_forecast.xlsx - Sheet1.csv")
+    model, X_test, y_test, X_train = train_model(df)
+    predicted_price, action = predict_next_5min_with_signal(model, df, location_id=2)
+
+    st.session_state.predicted_price = predicted_price
+    st.session_state.trade_signal = action
+
+    st.session_state.model_ran = True  # Avoid running again on every rerun
+
 if 'chart_data' not in st.session_state:
     # Generate initial random data for the demo chart
     x = np.linspace(0, 100, 100)
@@ -575,49 +591,95 @@ if uploaded_file:
         st.error(f"⚠️ ERROR PROCESSING FILE: {e}")
 else:
     # Display a demo chart with auto-updating random data 
+    # with chart_placeholder:
+    #     # Use the data from session state
+    #     x = st.session_state.chart_data['x']
+    #     y1 = st.session_state.chart_data['y1']
+    #     y2 = st.session_state.chart_data['y2']
+        
+    #     # Create the figure with a unique key to force refresh
+    #     fig, ax = plt.subplots(figsize=(10, 6), num=st.session_state.chart_id)
+    #     fig.patch.set_facecolor('#1E1E1E')
+    #     ax.set_facecolor('#2D2D2D')
+        
+    #     ax.plot(x, y1, color='#00FF00', linewidth=2, label='AI3 PREDICTION')
+    #     ax.plot(x, y2, color='#FF4500', linewidth=2, label='ACTUAL NEM PRICE')
+        
+    #     # Add grid and styling
+    #     ax.grid(True, linestyle='--', alpha=0.7, color='#444444')
+    #     ax.set_title('⚡ LIVE NEM PRICE PREDICTION ⚡', color='#FFD700', fontsize=16)
+    #     ax.set_xlabel('Time Index', color='#FFD700')
+    #     ax.set_ylabel('Price ($/MWh)', color='#FFD700')
+    #     ax.tick_params(colors='#FFD700')
+        
+    #     # Style the chart borders
+    #     for spine in ax.spines.values():
+    #         spine.set_color('#FFD700')
+        
+    #     # Add legend with custom styling
+    #     legend = ax.legend()
+    #     frame = legend.get_frame()
+    #     frame.set_facecolor('#2D2D2D')
+    #     frame.set_edgecolor('#FFD700')
+    #     for text in legend.get_texts():
+    #         text.set_color('#FFD700')
+            
+    #     # Display high volatility regions
+    #     for i in range(0, 100, 20):
+    #         if i % 40 == 0:
+    #             ax.axvspan(i, i+10, alpha=0.3, color='red')
+        
+    #     # Add current price marker
+    #     ax.axhline(y=y2[-1], color='#FF00FF', linestyle='--', alpha=0.7)
+    #     ax.text(0, y2[-1] + 2, f"CURRENT: ${y2[-1]:.2f}", color='#FF00FF')
+        
+    #     st.pyplot(fig)
     with chart_placeholder:
-        # Use the data from session state
+    # Use the data from session state
         x = st.session_state.chart_data['x']
         y1 = st.session_state.chart_data['y1']
         y2 = st.session_state.chart_data['y2']
-        
+        current_price = st.session_state.current_price
+        predicted_price = st.session_state.predicted_price
+
         # Create the figure with a unique key to force refresh
         fig, ax = plt.subplots(figsize=(10, 6), num=st.session_state.chart_id)
         fig.patch.set_facecolor('#1E1E1E')
         ax.set_facecolor('#2D2D2D')
-        
-        ax.plot(x, y1, color='#00FF00', linewidth=2, label='AI PREDICTION')
-        ax.plot(x, y2, color='#FF4500', linewidth=2, label='ACTUAL NEM PRICE')
-        
-        # Add grid and styling
+
+        # Plot actual and predicted trend lines
+        ax.plot(x, y1, color='#00FF00', linewidth=2, label='AI PREDICTION (Trend)')
+        ax.plot(x, y2, color='#FF4500', linewidth=2, label='ACTUAL NEM PRICE (Trend)')
+
+        # Add horizontal lines for current and predicted price
+        ax.axhline(y=current_price, color='#1E90FF', linestyle='--', linewidth=2, label=f'CURRENT PRICE: ${current_price:.2f}')
+        ax.axhline(y=predicted_price, color='#FFD700', linestyle='--', linewidth=2, label=f'PREDICTED PRICE: ${predicted_price:.2f}')
+
+        # Labels and style
         ax.grid(True, linestyle='--', alpha=0.7, color='#444444')
         ax.set_title('⚡ LIVE NEM PRICE PREDICTION ⚡', color='#FFD700', fontsize=16)
         ax.set_xlabel('Time Index', color='#FFD700')
         ax.set_ylabel('Price ($/MWh)', color='#FFD700')
         ax.tick_params(colors='#FFD700')
-        
-        # Style the chart borders
+
         for spine in ax.spines.values():
             spine.set_color('#FFD700')
-        
-        # Add legend with custom styling
+
+        # Styled legend
         legend = ax.legend()
         frame = legend.get_frame()
         frame.set_facecolor('#2D2D2D')
         frame.set_edgecolor('#FFD700')
         for text in legend.get_texts():
             text.set_color('#FFD700')
-            
-        # Display high volatility regions
+
+        # Optional: Highlight high-volatility zones
         for i in range(0, 100, 20):
             if i % 40 == 0:
-                ax.axvspan(i, i+10, alpha=0.3, color='red')
-        
-        # Add current price marker
-        ax.axhline(y=y2[-1], color='#FF00FF', linestyle='--', alpha=0.7)
-        ax.text(0, y2[-1] + 2, f"CURRENT: ${y2[-1]:.2f}", color='#FF00FF')
-        
+                ax.axvspan(i, i + 10, alpha=0.3, color='red')
+
         st.pyplot(fig)
+
     
     
     st.markdown("""
