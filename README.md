@@ -42,7 +42,7 @@ source venv/bin/activate   # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Option B: Global Installation
+#### Option B: Global Installation
 
 ```bash
 pip install -r requirements.txt
