@@ -66,21 +66,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-st.markdown(
-    f"""
-    <style>
-    .stApp {{
-        background-image: url("https://media1.tenor.com/m/VbezPY1TRaMAAAAd/fire-flames.gif");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-position: center;
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 # Load external CSS
 with open("test.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)

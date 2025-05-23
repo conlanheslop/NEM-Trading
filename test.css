@@ -5,20 +5,7 @@
     color: #FFD700;
 }
 .stApp {
-    background-image: url("https://media1.tenor.com/m/VbezPY1TRaMAAAAd/fire-flames.gif");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
     color: #FFD700;
-}
-.stApp::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.5); /* dark overlay */
-    z-index: -1;
 }
 h1, h2, h3 {
     color: #FFD700 !important;
