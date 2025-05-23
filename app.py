@@ -6,7 +6,7 @@ import datetime
 import time
 from matplotlib.colors import LinearSegmentedColormap
 import uuid
-from model import preprocess_data, train_model, predict_next_5min_with_signal
+from model import preprocess_data, train_model, predict_next_5min_price, get_live_price, make_live_prediction
 
 ##################
 ### PAGE SETUP ###
@@ -36,11 +36,11 @@ if 'predicted_price' not in st.session_state:
 if 'model_ran' not in st.session_state:
     # Load and preprocess data
     df, other = preprocess_data("combined_NSW_nem_weather_forecast.xlsx - Sheet1.csv")
-    model, X_test, y_test, X_train = train_model(df)
-    predicted_price, action = predict_next_5min_with_signal(model, df, location_id=2)
+    # model, X_test, y_test, X_train = train_model(df)
+    predicted_price = make_live_prediction()
 
     st.session_state.predicted_price = predicted_price
-    st.session_state.trade_signal = action
+    st.session_state.trade_signal = "HOLD"
 
     st.session_state.model_ran = True  # Avoid running again on every rerun
 
@@ -644,7 +644,10 @@ else:
 
         # Create the figure with a unique key to force refresh
         fig, ax = plt.subplots(figsize=(10, 6), num=st.session_state.chart_id)
-        fig.patch.set_facecolor('#1E1E1E')
+        fig.patch.set_facecolor('#1E1E1E')# The above code snippet is a part of a Python script that
+        # is likely used for plotting data. Here is a breakdown of
+        # what the code is doing:
+        
         ax.set_facecolor('#2D2D2D')
 
         # Plot actual and predicted trend lines
