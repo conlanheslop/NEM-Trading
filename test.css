@@ -1,0 +1,232 @@
+/* styles.css */
+
+.main {
+    background-color: #1E1E1E;
+    color: #FFD700;
+}
+.stApp {
+    background-image: url("https://media1.tenor.com/m/VbezPY1TRaMAAAAd/fire-flames.gif");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    color: #FFD700;
+}
+.stApp::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.5); /* dark overlay */
+    z-index: -1;
+}
+h1, h2, h3 {
+    color: #FFD700 !important;
+    text-shadow: 0 0 10px #FF4500, 0 0 20px #FF4500;
+    font-weight: bold !important;
+}
+.warning-banner {
+    background-color: #FFFF00;
+    color: #FF0000;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    animation: blinker 1s linear infinite;
+}
+.trade-card {
+    background-color: #3D1F1F;
+    border: 2px dashed #FF0000;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+.trade-suggestion {
+    background-color: #2F2F00;
+    color: #FFFF00;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #FFFF00;
+    margin-bottom: 10px;
+}
+.profit-loss {
+    background-color: #2F2F00;
+    color: #FFFF00;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #FFFF00;
+}
+.table-header {
+    color: #FFFF00;
+    background-color: #8B0000;
+    text-align: center !important;
+    font-weight: bold;
+}
+.active-trades-title {
+    text-align: left;
+    color: #FFD700 !important;
+    text-shadow: 0 0 10px #FF4500, 0 0 20px #FF4500;
+    font-weight: bold !important;
+}
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #FFFF00;
+}
+.custom-table th, .custom-table td {
+    padding: 10px;
+    border: 1px solid #444444;
+    text-align: center;
+}
+.table-header {
+    background-color: #8B0000;
+    font-weight: bold;
+}
+.row-dark {
+    background-color: #8B0000;
+}
+.row-darker {
+    background-color: #2D2D2D;
+}
+.profit {
+    color: #00FF00 !important;
+}
+.loss {
+    color: #FF0000 !important;
+}
+@keyframes blinker {
+    50% {
+        opacity: 0.8;
+    }
+}
+.stDataFrame {
+    background-color: #2D2D2D;
+}
+.css-1ht1j8u {
+    overflow-x: auto;
+}
+.css-1ht1j8u table {
+    width: 100%;
+}
+/* Customize the file uploader */
+.css-1cpxqw2 {
+    background-color: #2D2D2D;
+    border: 1px solid #FFD700;
+    color: #FFD700;
+}
+/* Buttons */
+.stButton>button {
+    background-color: #FF4500;
+    color: white;
+    font-weight: bold;
+    border: 2px solid #FFD700;
+}
+.stButton>button:hover {
+    background-color: #FFD700;
+    color: black;
+}
+.balance-card {
+    background-color: #2F2F00;
+    color: #FFFF00;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+.current-price {
+    background-color: #2F2F00;
+    color: #00FF00;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #FFFF00;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.update-timer {
+    color: #FFD700;
+    text-align: center;
+    margin-top: 5px;
+    font-style: italic;
+}
+.active-trades {
+    background-color: #2F2F2F;
+    color: #FFD700;
+    padding: 10px;
+    border: 1px solid #FFD700;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+/* 🆕 EXTREME CARD STYLES */
+.extreme-card {
+    background-color: #2D2D2D;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #FFD700;
+}
+.extreme-card h3 {
+    color: #FFD700;
+    margin-bottom: 10px;
+}
+.extreme-card p {
+    color: #FFD700;
+    margin: 5px 0;
+}
+.extreme-card p.italic {
+    font-style: italic;
+}
+
+/* PORTFOLIO STYLES */
+.portfolio-summary {
+    background-color: #2D2D2D;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #FFD700;
+    margin-top: 20px;
+    text-align: center;
+}
+.portfolio-summary h2 {
+    color: #FFD700;
+    margin-bottom: 10px;
+}
+.portfolio-summary p {
+    color: #FFFF00;
+    font-size: 20px;
+}
+.portfolio-summary p span {
+    color: #00FF00;
+    font-weight: bold;
+}
+.portfolio-summary p:last-child {
+    font-size: 24px;
+}
+
+.footer-bar {
+    background-color: #2D2D2D;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid #FFD700;
+}
+.footer-bar p {
+    color: #FFD700;
+    margin: 0;
+}
+.footer-bar span {
+    color: #00FF00;
+    font-weight: bold;
+}
+.footer-bar span.price {
+    color: #FF00FF;
+}
